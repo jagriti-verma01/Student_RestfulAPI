@@ -1,7 +1,7 @@
-﻿using interviewpractice.Context;
+﻿using FluentValidation;
+using interviewpractice.Context;
 using interviewpractice.Models;
-using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.AspNetCore.Mvc;
+using FluentValidation.Results;
 using Microsoft.EntityFrameworkCore;
 
 namespace interviewpractice.Services
@@ -9,14 +9,16 @@ namespace interviewpractice.Services
     public class StudentService : IStudentService
     {
         public readonly AppDbContext _appDbContext;
-        public StudentService(AppDbContext appDbContext)
+        private readonly IValidator<StudentModel> _validator;
+        public StudentService(AppDbContext appDbContext, IValidator<StudentModel> validator)
         {
             _appDbContext = appDbContext;
+            _validator = validator;
         }
 
         public async Task<IEnumerable<StudentModel>> StudentList()
         {
-            var student =  await _appDbContext.StudentModel.ToListAsync();
+            var student = await _appDbContext.StudentModel.ToListAsync();
             return student;
         }
 
@@ -27,15 +29,21 @@ namespace interviewpractice.Services
             {
                 return null;
             }
-            
+
             return getStudent;
         }
         public async Task<StudentModel> AddStudentService(StudentModel student)
 
         {
+            var validationResult = await _validator.ValidateAsync(student);
+
+            if (!validationResult.IsValid)
+            {
+                throw new ValidationException(validationResult.Errors);
+            }
             await _appDbContext.StudentModel.AddAsync(student); // Add student to the DbSet
-            await _appDbContext.SaveChangesAsync(); // Save changes to the database
-            return student;
+                await _appDbContext.SaveChangesAsync(); // Save changes to the database
+                return student;
+            }
         }
     }
-}

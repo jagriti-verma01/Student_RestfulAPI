@@ -1,6 +1,7 @@
-
+using FluentValidation;
 using interviewpractice.Context;
 using interviewpractice.Services;
+using interviewpractice.Validation;
 using Microsoft.EntityFrameworkCore;
 
 namespace interviewpractice
@@ -13,14 +14,16 @@ namespace interviewpractice
             builder.Services.AddDbContext<AppDbContext>(options =>
    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-
-            // Add services to the container.
+          // Add services to the container.
 
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
             builder.Services.AddScoped<IStudentService, StudentService>();
+            // Validators ko assembly se register karein
+
+            builder.Services.AddValidatorsFromAssemblyContaining<StudentValidation>();
 
             var app = builder.Build();
 
