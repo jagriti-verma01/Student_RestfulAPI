@@ -16,6 +16,18 @@ namespace interviewpractice.Validation
                 .WithMessage("Student name is required.")
                 .MaximumLength(50)
                 .WithMessage("Student name cannot exceed 50 characters.");
+
+            RuleFor(x => x.course)
+                .NotEmpty()
+                .WithMessage("Student Course is required")
+                .MaximumLength(50)
+                .WithMessage("Student course cannot be too long;");
+
+            RuleFor(x => x.age)
+                .NotEmpty()
+                .WithMessage("Student age is required")
+                .GreaterThan(4)
+                .WithMessage("Student should be greater than 4");
         }
     }
 }

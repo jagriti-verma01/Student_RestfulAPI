@@ -1,6 +1,7 @@
 ﻿using FluentValidation;
 using interviewpractice.Models;
 using interviewpractice.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
@@ -18,14 +19,14 @@ namespace interviewpractice.Controllers
 
         }
 
-
+        [Authorize]
         [HttpGet]
         public async Task<IEnumerable<StudentModel>> GetStudentList()
         {
             var studentList = await _studentService.StudentList();
             return studentList;
         }
-
+        [Authorize(Roles = "Admin")]
         [HttpGet("{id}")]
         public async Task<ActionResult<StudentModel>> GetStudent(int id)
         {
@@ -38,6 +39,14 @@ namespace interviewpractice.Controllers
             return Ok(studentId);
         }
 
+        [HttpGet("course/{course}")]
+        public  Task<StudentModel> GetStudentByCourse( string course)
+        {
+            var student = _studentService.FindStudentByCourse(course);
+            return student;
+        }
+
+        [Authorize(Roles = "User")]
         [HttpPost]
 
         public async Task<ActionResult<StudentModel>> AddStudent([FromBody] StudentModel student)

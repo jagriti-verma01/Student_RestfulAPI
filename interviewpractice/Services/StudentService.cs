@@ -1,7 +1,6 @@
 ﻿using FluentValidation;
 using interviewpractice.Context;
 using interviewpractice.Models;
-using FluentValidation.Results;
 using Microsoft.EntityFrameworkCore;
 
 namespace interviewpractice.Services
@@ -31,6 +30,18 @@ namespace interviewpractice.Services
             }
 
             return getStudent;
+        }
+
+        public async Task<StudentModel> FindStudentByCourse(string course)
+        {
+            var student = await _appDbContext.StudentModel
+                .Where(s => s.course == course)
+                .FirstOrDefaultAsync();
+            if (student == null)
+            {
+                return null;
+            }
+            return student;
         }
         public async Task<StudentModel> AddStudentService(StudentModel student)
 
