@@ -7,6 +7,5 @@
         public string course { get; set; }
         public int age { get; set; }
 
-
     }
 }
